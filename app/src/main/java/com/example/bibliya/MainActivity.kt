@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,11 +44,14 @@ class MainActivity : ComponentActivity() {
                     BackHandler(
                         enabled = state.pickerOpen && nav.currentDestination?.route == "picker"
                     ) {
+                        // Keep the nav back stack and pickerOpen in sync so the
+                        // picker stays open while choosing book/chapter and closes on verse.
+                        vm.closePicker()
                         nav.popBackStack()
                     }
                     NavHost(navController = nav, startDestination = "reader") {
                         composable("reader") {
-                            ReaderRoot(state, vm) { nav.navigate("picker") }
+                            ReaderRoot(state, vm, vm::openPicker)
                         }
                         composable("picker") {
                             PickerScreen(state, vm)
@@ -75,11 +80,20 @@ private fun ReaderRoot(state: AppState, vm: BibleViewModel, onOpenPicker: () -> 
 
 @Composable
 private fun LoadingScreen() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center,
+    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator()
             Spacer(Modifier.height(16.dp))
-            Text(stringResource(R.string.loading), fontSize = 18.sp)
+            Text(
+                stringResource(R.string.loading),
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
         }
     }
 }
