@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -118,6 +119,7 @@ private fun TopControls(state: AppState, vm: BibleViewModel) {
         }
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
+            val focusManager = LocalFocusManager.current
             TextField(
                 value = state.picker.query,
                 onValueChange = vm::setSearchQuery,
@@ -126,7 +128,7 @@ private fun TopControls(state: AppState, vm: BibleViewModel) {
                 modifier = Modifier.weight(1f),
                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = 18.sp, color = MaterialTheme.colorScheme.onBackground),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { LocalFocusManager.current.clearFocus() }),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 trailingIcon = {
                     if (state.picker.busy) CircularProgressIndicator(Modifier.size(18.dp)) else null
                 },
@@ -236,6 +238,7 @@ private fun BookRows(books: List<Book>, vm: BibleViewModel) {
             }
         }
     }
+}
 @Composable
 private fun ChapterGrid(state: AppState, vm: BibleViewModel) {
     val book = state.edition?.book(state.book) ?: return

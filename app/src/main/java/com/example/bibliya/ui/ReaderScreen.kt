@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -60,6 +61,7 @@ import com.example.bibliya.BibleRegistry
 import com.example.bibliya.R
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReaderScreen(state: AppState, vm: BibleViewModel, onOpenPicker: () -> Unit) {
     val settings = state.settings
@@ -95,7 +97,7 @@ fun ReaderScreen(state: AppState, vm: BibleViewModel, onOpenPicker: () -> Unit) 
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                itemsIndexed(verses, key = { _, i -> state.book * 10000 + state.chapter * 1000 + i }) { i, verse ->
+                itemsIndexed(verses, key = { i, _ -> state.book * 10000 + state.chapter * 1000 + i }) { i, verse ->
                     VerseRow(
                         verse = verse,
                         number = i + 1,
@@ -121,7 +123,7 @@ fun ReaderScreen(state: AppState, vm: BibleViewModel, onOpenPicker: () -> Unit) 
 }
 private fun Modifier.swipeChapter(onLeft: () -> Unit, onRight: () -> Unit): Modifier = composed {
     val density = LocalDensity.current
-    val threshold = with(density) { 120.dp.toPixels() }
+    val threshold = with(density) { 120.dp.toPx() }
     pointerInput(onLeft, onRight) {
         var totalX = 0f
         detectHorizontalDragGestures(
@@ -243,6 +245,7 @@ private fun VerseRow(
         verticalAlignment = Alignment.Top,
     ) {
         val numColor = scheme.onBackground.copy(alpha = 0.55f)
+        val verseNumberShift = with(LocalDensity.current) { -(fs * 0.20f).dp.roundToPx() }
         Box(
             Modifier
                 .width(with(LocalDensity.current) { (fs * 0.75f * 2.4f).dp })
@@ -256,7 +259,7 @@ private fun VerseRow(
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .offset { IntOffset(0, with(LocalDensity.current) { -(fs * 0.20f).dp }.roundToPx()) },
+                    .offset { IntOffset(0, verseNumberShift) },
             )
         }
         Text(

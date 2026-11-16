@@ -33,11 +33,35 @@ enum class AccentColor(val seed: Color) {
     PURPLE(Color(0xFF7B52C0));
 
     fun tonalScheme(dark: Boolean) = if (dark) darkScheme() else lightScheme()
-    fun lightScheme() = androidx.compose.material3.lightColorScheme(seed = seed)
+
+    private fun onSeed(): Color = onPrimaryTextFor(seed)
+
+    fun lightScheme() = androidx.compose.material3.lightColorScheme(
+        primary = seed,
+        onPrimary = onSeed(),
+        secondary = seed,
+        onSecondary = onSeed(),
+        background = Color(0xFFFCFCFA),
+        onBackground = Color(0xFF1C1C1E),
+        surface = Color(0xFFFCFCFA),
+        onSurface = Color(0xFF1C1C1E),
+    )
 }
 
-private fun darkSchemeOf(seed: Color) =
-    androidx.compose.material3.darkColorScheme(seed = seed)
+/** WCAG-friendly ink for text drawn on a given background seed color. */
+private fun onPrimaryTextFor(seed: Color): Color =
+    if (androidx.core.graphics.ColorUtils.calculateLuminance(seed.toArgb()) >= 0.5f) Color(0xFF232929) else Color.White
+
+private fun darkSchemeOf(seed: Color) = androidx.compose.material3.darkColorScheme(
+    primary = seed,
+    onPrimary = onPrimaryTextFor(seed),
+    secondary = seed,
+    onSecondary = onPrimaryTextFor(seed),
+    background = Color(0xFF18181B),
+    onBackground = Color(0xFFE5E3E9),
+    surface = Color(0xFF18181B),
+    onSurface = Color(0xFFE5E3E9),
+)
 
 @Suppress("UNUSED_PARAMETER") // dark computed from theme, not system
 private fun AccentColor.darkScheme() = darkSchemeOf(seed)

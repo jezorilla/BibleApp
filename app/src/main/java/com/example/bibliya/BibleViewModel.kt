@@ -1,12 +1,13 @@
 package com.example.bibliya
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.preference.PreferenceManager
 import com.example.bibliya.ui.AccentColor
 import com.example.bibliya.ui.AppTheme
 import com.example.bibliya.ui.LineSpacing
@@ -20,7 +21,7 @@ import kotlinx.coroutines.withContext
 enum class PickerStep { BOOKS, CHAPTERS, VERSES }
 enum class TestamentFilter { ALL, OLD, NEW }
 
-class PickerState(
+data class PickerState(
     val step: PickerStep = PickerStep.BOOKS,
     val filter: TestamentFilter = TestamentFilter.ALL,
     val query: String = "",
@@ -29,7 +30,7 @@ class PickerState(
 )
 
 /** Single source of truth for every screen. All changes go through the ViewModel. */
-class AppState(
+data class AppState(
     val isLoading: Boolean = true,
     val error: String? = null,
     val currentVersionId: String = "",
@@ -45,7 +46,7 @@ class AppState(
 )
 
 class BibleViewModel(app: Application) : AndroidViewModel(app) {
-    private val prefs = PreferenceManager.getDefaultSharedPreferences(app.applicationContext)
+    private val prefs: SharedPreferences = app.getSharedPreferences("bibliya_prefs", Context.MODE_PRIVATE)
     private val repo = BibleRepository()
     private val editions = HashMap<String, BibleEdition>()
 

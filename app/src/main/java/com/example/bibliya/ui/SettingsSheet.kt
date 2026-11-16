@@ -19,7 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +42,14 @@ import androidx.compose.ui.unit.sp
 import com.example.bibliya.BibleViewModel
 import com.example.bibliya.R
 
+/** Theme row: preview swatch background + text colors. */
+private data class ThemeOption(
+    val theme: AppTheme,
+    val bg: Color,
+    val fg: Color,
+    val label: String
+)
+
 @Composable
 fun SettingsSheetContent(vm: BibleViewModel) {
     val settings = vm.state.settings
@@ -59,7 +67,7 @@ fun SettingsSheetContent(vm: BibleViewModel) {
         Text(stringResource(R.string.accent_color), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.height(6.dp))
         var selectedAccent by remember { mutableStateOf(settings.accent) }
-        Row(horizontalArrangement = Arrangement.spacedBy(14.dp), Modifier.align(Alignment.Start)) {
+        Row(Modifier.align(Alignment.Start), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             for (color in AccentColor.entries) {
                 val boxColor = color.seed
                 val selected = selectedAccent == color
@@ -97,9 +105,9 @@ fun SettingsSheetContent(vm: BibleViewModel) {
 @Composable
 private fun ThemeChooser(settings: Settings, vm: BibleViewModel) {
     val entries = listOf(
-        Triple(AppTheme.LIGHT, Color(0xFFF7F4E9), Color(0xFF1F1B16), "Light"),
-        Triple(AppTheme.DARK, Color(0xFF232125), Color(0xFFF2EEF4), "Dark"),
-        Triple(AppTheme.SEPIA, Color(0xFFF7E9C7), Color(0xFF3B3228), "Sepia"),
+        ThemeOption(AppTheme.LIGHT, Color(0xFFF7F4E9), Color(0xFF1F1B16), "Light"),
+        ThemeOption(AppTheme.DARK, Color(0xFF232125), Color(0xFFF2EEF4), "Dark"),
+        ThemeOption(AppTheme.SEPIA, Color(0xFFF7E9C7), Color(0xFF3B3228), "Sepia"),
     )
     for ((idx, entry) in entries.withIndex()) {
         val (theme, bg, fg, label) = entry
@@ -148,7 +156,7 @@ private fun FontSizeChooser(settings: Settings, vm: BibleViewModel) {
             onClick = { sliderValue = (sliderValue - 2f).coerceIn(16f, 40f); vm.setFontSize(sliderValue) },
             modifier = Modifier.size(56.dp),
         ) {
-            Icon(Icons.Default.Remove, contentDescription = "A-", modifier = Modifier.size(22.dp))
+            Icon(Icons.Default.Clear, contentDescription = "A-", modifier = Modifier.size(22.dp))
         }
         Slider(
             value = sliderValue,

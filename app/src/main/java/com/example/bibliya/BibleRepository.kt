@@ -177,7 +177,8 @@ class BibleRepository {
         return BibleEdition(version, books)
     }
 
-    private fun readCache(context: Context, version: BibleVersion): BibleEdition? = try {
+    private fun readCache(context: Context, version: BibleVersion): BibleEdition? {
+        return try {
         val f = cacheFile(context, version)
         if (!f.exists() || f.length() < 1000) return null
         val root = JSONObject(f.readText(Charsets.UTF_8))
@@ -200,6 +201,7 @@ class BibleRepository {
         BibleEdition(version, books)
     } catch (e: Exception) {
         null
+    }
     }
 
     private fun writeCache(context: Context, version: BibleVersion, edition: BibleEdition) {
